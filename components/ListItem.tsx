@@ -4,6 +4,7 @@ import {
   Text, View, StyleSheet, ToastAndroid, Vibration,
 } from 'react-native';
 import { LongPressGestureHandler, State } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import useFormatPrice from '../hooks/useFormatPrice';
 
 export default function ListItem({
@@ -25,15 +26,19 @@ export default function ListItem({
   const updateValue = (value: boolean) => {
     setChecked(value);
 
+    let cash;
     if (value) {
+      cash = (Number(amount) * 100 - Number(item.price) * 100) / 100;
       setAmount(
-        (Number(amount) * 100 - Number(item.price) * 100) / 100,
+        cash,
       );
     } else {
+      cash = (Number(amount) * 100 + Number(item.price) * 100) / 100;
       setAmount(
-        (Number(amount) * 100 + Number(item.price) * 100) / 100,
+        cash,
       );
     }
+    AsyncStorage.setItem('cash', `${cash}`);
   };
 
   const Item = ({ title, price }: Data) => (
